@@ -7,6 +7,7 @@ import { colors } from '../uikit/theme';
 import HomeScreen from '../screens/Tenant/HomeScreen';
 import MyBookingsScreen from '../screens/Tenant/MyBookingsScreen';
 import ProfileScreen from '../screens/Tenant/ProfileScreen';
+import MapScreen from '../screens/Tenant/MapScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,6 +20,8 @@ const TenantTabNavigator = () => {
 
                     if (route.name === 'Home') {
                         iconName = focused ? 'home' : 'home-outline';
+                    } else if (route.name === 'Map') {
+                        iconName = focused ? 'map' : 'map-outline';
                     } else if (route.name === 'Bookings') {
                         iconName = focused ? 'calendar' : 'calendar-outline';
                     } else if (route.name === 'Profile') {
@@ -39,6 +42,7 @@ const TenantTabNavigator = () => {
             })}
         >
             <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Map" component={MapScreen} />
             <Tab.Screen name="Bookings" component={MyBookingsScreen} />
             <Tab.Screen name="Profile" component={ProfileScreen} />
         </Tab.Navigator>

@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, Alert, Switch } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../../services/supabase';
 import { useAuth } from '../../context/AuthContext';
+import * as Location from 'expo-location';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { colors, spacing, typography, borderRadius } from '../../uikit/theme';
@@ -20,6 +21,8 @@ const AddPropertyScreen = ({ navigation }) => {
         city: '',
         monthly_price: '',
         amenities: [],
+        latitude: null,
+        longitude: null,
     });
 
     const handleChange = (key, value) => {
@@ -37,9 +40,37 @@ const AddPropertyScreen = ({ navigation }) => {
         });
     };
 
+    const getCurrentLocation = async () => {
+        try {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission to access location was denied');
+                return;
+            }
+
+            setLoading(true);
+            let location = await Location.getCurrentPositionAsync({});
+            setFormData(prev => ({
+                ...prev,
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+            }));
+            Alert.alert('Success', 'Location captured!');
+        } catch (e) {
+            Alert.alert('Error', 'Could not fetch location: ' + e.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleSubmit = async () => {
         if (!formData.title || !formData.monthly_price || !formData.address || !formData.city) {
             Alert.alert('Error', 'Please fill in required fields');
+            return;
+        }
+
+        if (!formData.latitude || !formData.longitude) {
+            Alert.alert('Error', 'Please capture the property location');
             return;
         }
 
@@ -55,8 +86,8 @@ const AddPropertyScreen = ({ navigation }) => {
                     monthly_price: parseFloat(formData.monthly_price),
                     amenities: formData.amenities,
                     images: [], // TODO: Implement Image Upload
-                    latitude: 0, // TODO: Implement Map Selection
-                    longitude: 0,
+                    latitude: formData.latitude,
+                    longitude: formData.longitude,
                 }
             ]);
 
@@ -105,6 +136,19 @@ const AddPropertyScreen = ({ navigation }) => {
                     value={formData.address}
                     onChangeText={(t) => handleChange('address', t)}
                 />
+
+                <View style={{ marginBottom: spacing.m }}>
+                    <Text style={{ ...typography.body, fontWeight: '600', marginBottom: spacing.s }}>Location*</Text>
+                    {formData.latitude ? (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                            <Text style={{ color: colors.success }}>✓ Location Captured ({formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)})</Text>
+                            <Button title="Retake" variant="text" onPress={getCurrentLocation} style={{ paddingVertical: 0 }} textStyle={{ fontSize: 14 }} />
+                        </View>
+                    ) : (
+                        <Button title="Get Current Location" variant="outline" onPress={getCurrentLocation} />
+                    )}
+                </View>
+
                 <Input
                     label="Description"
                     placeholder="Describe your property..."

@@ -31,6 +31,10 @@ This project leverages a robust stack of modern technologies to ensure performan
 ### State Management
 *   **React Context API**: implementation of `AuthContext` for global session management.
 
+### Map & Location
+*   **[React Native Maps](https://github.com/react-native-maps/react-native-maps)**: Interactive maps for displaying property locations.
+*   **[Expo Location](https://docs.expo.dev/versions/latest/sdk/location/)**: Geolocation services to capture property coordinates (Latitude/Longitude).
+
 ---
 
 ## ✨ Features
@@ -38,6 +42,7 @@ This project leverages a robust stack of modern technologies to ensure performan
 ### 👤 Tenant Role
 *   **Browse Properties**: View available listings with images and prices.
 *   **Search & Filter**: Find homes by location or keyword.
+*   **Map View**: Interactive map showing nearby properties with price markers.
 *   **Booking System**: Request to book properties.
 *   **Management**: Track status of bookings (Pending, Approved, Rejected).
 
